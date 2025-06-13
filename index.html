@@ -23,7 +23,7 @@
             padding: 30px;
             border-radius: 10px;
             width: 90%;
-            max-width: 600px;
+            max-width: 800px;
         }
 
         h1 {
@@ -46,21 +46,18 @@
             display: flex;
             justify-content: space-around;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
-        .option-btn {
-            background-color: #f8d210;
-            color: #1e1e1e;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+        .option-item {
+            margin: 10px;
+            display: flex;
+            align-items: center;
         }
 
-        .option-btn:hover {
-            background-color: #f4b400;
+        .option-item input {
+            margin-right: 10px;
+            transform: scale(1.5);
         }
 
         .generate-btn {
@@ -84,6 +81,39 @@
             color: #bbb;
         }
 
+        .strength-bar {
+            width: 100%;
+            height: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .strength-weak {
+            background-color: #f44336;
+            width: 25%;
+        }
+
+        .strength-medium {
+            background-color: #ffeb3b;
+            width: 50%;
+        }
+
+        .strength-strong {
+            background-color: #4caf50;
+            width: 75%;
+        }
+
+        .strength-very-strong {
+            background-color: #8bc34a;
+            width: 100%;
+        }
+
+        .info {
+            color: #bbb;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
     </style>
 </head>
 <body>
@@ -91,16 +121,32 @@
 <div class="container">
     <h1>Gerador de Senha</h1>
     <input type="text" class="password-display" id="password" readonly>
-    
+
     <div class="options">
-        <button class="option-btn" id="lowercase">Minúsculas</button>
-        <button class="option-btn" id="uppercase">Maiúsculas</button>
-        <button class="option-btn" id="numbers">Números</button>
-        <button class="option-btn" id="symbols">Símbolos</button>
+        <div class="option-item">
+            <input type="checkbox" id="lowercase" checked>
+            <label for="lowercase">Minúsculas</label>
+        </div>
+        <div class="option-item">
+            <input type="checkbox" id="uppercase" checked>
+            <label for="uppercase">Maiúsculas</label>
+        </div>
+        <div class="option-item">
+            <input type="checkbox" id="numbers" checked>
+            <label for="numbers">Números</label>
+        </div>
+        <div class="option-item">
+            <input type="checkbox" id="symbols" checked>
+            <label for="symbols">Símbolos</label>
+        </div>
     </div>
-    
+
     <button class="generate-btn" onclick="generatePassword()">Gerar Senha</button>
-    
+
+    <div id="strengthBar" class="strength-bar"></div>
+    <div id="strengthLabel" class="info"></div>
+    <div id="daysToCrack" class="info"></div>
+
     <div class="footer">
         <p>Gerador de Senha | 2025</p>
     </div>
@@ -112,10 +158,10 @@
     let useNumbers = true;
     let useSymbols = true;
 
-    document.getElementById('lowercase').onclick = () => useLowercase = !useLowercase;
-    document.getElementById('uppercase').onclick = () => useUppercase = !useUppercase;
-    document.getElementById('numbers').onclick = () => useNumbers = !useNumbers;
-    document.getElementById('symbols').onclick = () => useSymbols = !useSymbols;
+    document.getElementById('lowercase').onclick = () => useLowercase = document.getElementById('lowercase').checked;
+    document.getElementById('uppercase').onclick = () => useUppercase = document.getElementById('uppercase').checked;
+    document.getElementById('numbers').onclick = () => useNumbers = document.getElementById('numbers').checked;
+    document.getElementById('symbols').onclick = () => useSymbols = document.getElementById('symbols').checked;
 
     function generatePassword() {
         const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
@@ -141,6 +187,32 @@
         }
 
         document.getElementById('password').value = password;
+
+        // Cálculo de complexidade
+        const totalCharacters = characters.length;
+        const passwordLength = 12; // Tamanho fixo da senha
+        const totalCombinations = Math.pow(totalCharacters, passwordLength);
+        const daysToCrack = totalCombinations / 1000000 / 86400; // Milhões de tentativas por segundo
+
+        document.getElementById('daysToCrack').innerText = `Dias para descobrir a senha: ${Math.floor(daysToCrack).toLocaleString()}`;
+
+        // Avaliação da força da senha
+        let strength = 'Muito fraca';
+        let strengthClass = 'strength-weak';
+
+        if (totalCombinations > Math.pow(10, 40)) {
+            strength = 'Muito forte';
+            strengthClass = 'strength-very-strong';
+        } else if (totalCombinations > Math.pow(10, 30)) {
+            strength = 'Forte';
+            strengthClass = 'strength-strong';
+        } else if (totalCombinations > Math.pow(10, 20)) {
+            strength = 'Média';
+            strengthClass = 'strength-medium';
+        }
+
+        document.getElementById('strengthBar').className = 'strength-bar ' + strengthClass;
+        document.getElementById('strengthLabel').innerText = `Força da senha: ${strength}`;
     }
 </script>
 
