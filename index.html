@@ -113,7 +113,6 @@
             margin-top: 10px;
             font-size: 16px;
         }
-
     </style>
 </head>
 <body>
@@ -153,16 +152,19 @@
 </div>
 
 <script>
-    let useLowercase = true;
-    let useUppercase = true;
-    let useNumbers = true;
-    let useSymbols = true;
+    // Inicializando as variáveis de controle
+    let useLowercase = document.getElementById('lowercase').checked;
+    let useUppercase = document.getElementById('uppercase').checked;
+    let useNumbers = document.getElementById('numbers').checked;
+    let useSymbols = document.getElementById('symbols').checked;
 
+    // Atualizando variáveis quando os checkboxes são clicados
     document.getElementById('lowercase').onclick = () => useLowercase = document.getElementById('lowercase').checked;
     document.getElementById('uppercase').onclick = () => useUppercase = document.getElementById('uppercase').checked;
     document.getElementById('numbers').onclick = () => useNumbers = document.getElementById('numbers').checked;
     document.getElementById('symbols').onclick = () => useSymbols = document.getElementById('symbols').checked;
 
+    // Função para gerar a senha
     function generatePassword() {
         const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
         const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
